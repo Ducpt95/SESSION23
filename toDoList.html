@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="jquery-3.6.1.js"></script>
+    <style>
+      #container {
+        display: flex;
+        flex-direction: column;
+      }
+      .sub-container table th,
+      .sub-container table td {
+        border: 1px solid gray;
+      }
+      table {
+        margin-top: 30px;
+        display: block;
+      }
+    </style>
+  </head>
+  <body onload="renderItem()">
+    <div id="container">
+      <div class="sub-container">
+        <h1>To Do List</h1>
+        <input id="input"/>
+        <button id="saveBtn" onclick="save()" type="submit">Save</button>
+        <button onclick="saveEdition(saveEditionId)" type="submit">Edit</button>
+      </div>
+
+      <div class="sub-container">
+        <table>
+          <thead>
+            <th>No.</th>
+            <th>Todo Item</th>
+            <th>Status</th>
+            <th colspan="3">Actions</th>
+          </thead>
+          <tbody id="tbody">
+            <tr>
+              <td>1</td>
+              <td>Item</td>
+              <td>Progress</td>
+              <td><button style="border-radius: 5px;background-color:rgb(238, 3, 3)">Edit</button></td>
+              <td><button style="border-radius: 5px;background-color:rgb(113, 223, 113)">Delete</button></td>
+              <td><button style="border-radius: 5px;background-color:rgb(125, 125, 247)">Finished</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+  <script>
+  function save() {
+    let newItem = document.getElementById("input");
+    let todoList = localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")) : [];
+    todoList.push(newItem.value)
+    localStorage.setItem("list",JSON.stringify(todoList));
+    renderItem();
+    newItem.value = '';
+  }
+  function renderItem() {
+      let todoList = localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")) : [];
+      let data = '';
+    for(let i=0;i<todoList.length;i++){
+        data += `<tr>
+              <td>${i+1}</td>
+              <td>${todoList[i]}</td>
+              <td>Progress</td>
+              <td><button onclick="editItems(${i})" style="border-radius: 5px;background-color:rgb(238, 3, 3)">Edit</button></td>
+              <td><button  onclick='deleteItem(${i})' style="border-radius: 5px;background-color:rgb(113, 223, 113)">Delete</button></td>
+              <td><button style="border-radius: 5px;background-color:rgb(125, 125, 247)">Finished</button></td>
+            </tr>
+        `
+    }
+    document.getElementById("tbody").innerHTML = data;
+  }
+  function deleteItem(id) {
+    let todoList = localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")) : [];
+    todoList.splice(id,1)
+    localStorage.setItem("list",JSON.stringify(todoList));
+    renderItem();
+  }
+  var saveEditionId = 0;
+  function editItems(id) {
+    let todoList = localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")) : [];
+    let editItems = document.getElementById("input").value = todoList[id]
+    saveEditionId = id;
+    console.log(saveEditionId,"saveEditionId test ok")
+  }
+  function saveEdition(saveEditionId) {
+    let editItems = document.getElementById("input");
+    let todoList = localStorage.getItem("list") ? JSON.parse(localStorage.getItem("list")) : [];
+    todoList.splice(saveEditionId,1,editItems.value)
+    localStorage.setItem("list",JSON.stringify(todoList))
+    renderItem();
+  }
+  
+  </script>
+</html>
